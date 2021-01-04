@@ -10,6 +10,9 @@ interface VideoDimensions {
 function App() {
   const wrapperRef = React.useRef<HTMLDivElement>(null);
   const videoRef = React.useRef<HTMLVideoElement>(null);
+  const [showOverlay, setShowOverlay] = React.useState(true);
+  const [testUrl, setTestUrl] = React.useState("");
+
   const [videoDimensions, setVideoDimensions] = React.useState<VideoDimensions>(
     {
       height: 0,
@@ -62,7 +65,13 @@ function App() {
     };
   }, [handleLoadedMetadata]);
 
-  const showOverLay = videoDimensions.height && videoDimensions.width;
+  const toggleShowOverlay = () => setShowOverlay(!showOverlay);
+
+  const handleOnInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTestUrl(event.target.value);
+  };
+
+  const hasDimensions = videoDimensions.height && videoDimensions.width;
 
   return (
     <div
@@ -70,19 +79,28 @@ function App() {
         width: 100vw;
         height: 100vh;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
       `}
     >
+      <div>
+        <button onClick={toggleShowOverlay}>Toggle Overlay</button>
+        <input
+          value={testUrl}
+          placeholder="Enter sample test url"
+          onChange={handleOnInputChange}
+        />
+      </div>
       <div
         ref={wrapperRef}
         css={css`
-          width: 1000px;
+          width: auto;
           height: 450px;
           position: relative;
         `}
       >
-        {showOverLay ? (
+        {showOverlay && hasDimensions ? (
           <div
             css={css`
               position: absolute;
@@ -95,7 +113,7 @@ function App() {
           >
             <div
               css={css`
-                border: solid 2px red;
+                border: solid 4px red;
                 width: ${videoDimensions.width}px;
                 height: ${videoDimensions.height}px;
               `}
@@ -110,7 +128,10 @@ function App() {
             outline: none;
           `}
           controls
-          src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+          src={
+            testUrl ||
+            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+          }
         />
       </div>
     </div>
