@@ -1,5 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
+import screenfull from 'screenfull'
 import * as React from "react";
 
 interface VideoDimensions {
@@ -71,6 +72,13 @@ function App() {
     setTestUrl(event.target.value);
   };
 
+  const goFullscreen = () => {
+    const wrapper = wrapperRef.current
+		if (screenfull.isEnabled && wrapper) {
+			screenfull.request(wrapper);
+		}
+  }
+
   const hasDimensions = videoDimensions.height && videoDimensions.width;
 
   return (
@@ -86,6 +94,7 @@ function App() {
     >
       <div>
         <button onClick={toggleShowOverlay}>Toggle Overlay</button>
+        <button onClick={goFullscreen}>Go fullscreen</button>
         <input
           value={testUrl}
           placeholder="Enter sample test url"
@@ -95,7 +104,7 @@ function App() {
       <div
         ref={wrapperRef}
         css={css`
-          width: auto;
+          max-width: 1000px;
           height: 450px;
           position: relative;
         `}
