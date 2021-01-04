@@ -17,39 +17,50 @@ function App() {
     }
   );
 
-  React.useEffect(() => {
+  const handleLoadedMetadata = React.useCallback(() => {
     const wrapper = wrapperRef.current;
     const video = videoRef.current;
 
-    const handleLoadedMetadata = () => {
-      if (video && wrapper) {
-        const {
-          offsetWidth: wrapperWidth,
-          offsetHeight: wrapperHeight,
-        } = wrapper;
-        const { videoWidth, videoHeight } = video;
+    if (video && wrapper) {
+      const {
+        offsetWidth: wrapperWidth,
+        offsetHeight: wrapperHeight,
+      } = wrapper;
+      const { videoWidth, videoHeight } = video;
 
-        const wrapperRatio = wrapperWidth / wrapperHeight;
-        const videoRatio = videoWidth / videoHeight;
+      const wrapperRatio = wrapperWidth / wrapperHeight;
+      const videoRatio = videoWidth / videoHeight;
 
-        if (videoRatio >= wrapperRatio) {
-          const newWidth = wrapperWidth;
-          const newHeight = Math.trunc(newWidth / videoRatio);
-          setVideoDimensions({ width: newWidth, height: newHeight });
-        } else {
-          const newHeight = wrapperHeight;
-          const newWidth = Math.trunc(newHeight * videoRatio);
-          setVideoDimensions({ width: newWidth, height: newHeight });
-        }
+      if (videoRatio >= wrapperRatio) {
+        const newWidth = wrapperWidth;
+        const newHeight = newWidth / videoRatio;
+        setVideoDimensions({ width: newWidth, height: newHeight });
+      } else {
+        const newHeight = wrapperHeight;
+        const newWidth = newHeight * videoRatio;
+        setVideoDimensions({ width: newWidth, height: newHeight });
       }
-    };
+    }
+  }, []);
 
-    video?.addEventListener("loadedmetadata", handleLoadedMetadata);
+  React.useEffect(() => {
+    videoRef.current?.addEventListener("loadedmetadata", handleLoadedMetadata);
 
     return () => {
-      video?.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      videoRef.current?.removeEventListener(
+        "loadedmetadata",
+        handleLoadedMetadata
+      );
     };
-  });
+  }, [handleLoadedMetadata]);
+
+  React.useEffect(() => {
+    window.addEventListener("resize", handleLoadedMetadata);
+
+    return () => {
+      window.removeEventListener("resize", handleLoadedMetadata);
+    };
+  }, [handleLoadedMetadata]);
 
   const showOverLay = videoDimensions.height && videoDimensions.width;
 
@@ -77,11 +88,13 @@ function App() {
               position: absolute;
               width: 100%;
               height: 100%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
             `}
           >
             <div
               css={css`
-                margin: auto;
                 border: solid 2px red;
                 width: ${videoDimensions.width}px;
                 height: ${videoDimensions.height}px;
