@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react";
-import screenfull from 'screenfull'
+import screenfull from "screenfull";
 import * as React from "react";
 
 interface VideoDimensions {
@@ -22,15 +22,15 @@ function App() {
   );
 
   const handleLoadedMetadata = React.useCallback(() => {
-    const wrapper = wrapperRef.current;
     const video = videoRef.current;
 
-    if (video && wrapper) {
+    if (video) {
       const {
+        videoWidth,
+        videoHeight,
         offsetWidth: wrapperWidth,
         offsetHeight: wrapperHeight,
-      } = wrapper;
-      const { videoWidth, videoHeight } = video;
+      } = video;
 
       const wrapperRatio = wrapperWidth / wrapperHeight;
       const videoRatio = videoWidth / videoHeight;
@@ -73,11 +73,11 @@ function App() {
   };
 
   const goFullscreen = () => {
-    const wrapper = wrapperRef.current
-		if (screenfull.isEnabled && wrapper) {
-			screenfull.request(wrapper);
-		}
-  }
+    const wrapper = wrapperRef.current;
+    if (screenfull.isEnabled && wrapper) {
+      screenfull.request(wrapper);
+    }
+  };
 
   const hasDimensions = videoDimensions.height && videoDimensions.width;
 
