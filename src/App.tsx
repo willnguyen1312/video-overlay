@@ -21,7 +21,7 @@ function App() {
     }
   );
 
-  const handleLoadedMetadata = React.useCallback(() => {
+  const handleVideoSizing = React.useCallback(() => {
     const video = videoRef.current;
 
     if (video) {
@@ -48,23 +48,23 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    videoRef.current?.addEventListener("loadedmetadata", handleLoadedMetadata);
+    videoRef.current?.addEventListener("loadedmetadata", handleVideoSizing);
 
     return () => {
       videoRef.current?.removeEventListener(
         "loadedmetadata",
-        handleLoadedMetadata
+        handleVideoSizing
       );
     };
-  }, [handleLoadedMetadata]);
+  }, [handleVideoSizing]);
 
   React.useEffect(() => {
-    window.addEventListener("resize", handleLoadedMetadata);
+    window.addEventListener("resize", handleVideoSizing);
 
     return () => {
-      window.removeEventListener("resize", handleLoadedMetadata);
+      window.removeEventListener("resize", handleVideoSizing);
     };
-  }, [handleLoadedMetadata]);
+  }, [handleVideoSizing]);
 
   const toggleShowOverlay = () => setShowOverlay(!showOverlay);
 
